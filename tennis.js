@@ -5,7 +5,8 @@ canvas.width = window.innerWidth -50;
 canvas.height = window.innerHeight - 50;
 
 let tpFatness= 20;
-let tpHeight = 700;
+let tpHeight = 80;
+let ayeSigh = 250;
 
 class ball {
     constructor(x, y, size, speed) {
@@ -82,12 +83,21 @@ class unman extends tennisPlayer {
     }
 
     follow(y) {
-
+        if(this.y+tpHeight/2<y && this.speed<0) {
+            this.speed = this.speed * -1;
+        } else if(this.y-tpHeight/2>y && this.speed>0) {
+            this.speed = this.speed * -1;
+        } else if(this.y>canvas.height-this.height || this.y<0){
+            this.speed = this.speed * -1;
+        }
+        
+        this.y = this.y + this.speed;
     }
 }
 
-let mainB = new ball(canvas.width/2,canvas.height/2, 20, -5);
-let player = new tennisPlayer(tpFatness, canvas.height/2-tpHeight/2, tpHeight, tpFatness, 5);
+let mainB = new ball(canvas.width/2,canvas.height/2, 20, 2);
+let player = new unman(tpFatness, canvas.height/2-tpHeight/2, tpHeight, tpFatness, 2);
+let enemy = new unman(canvas.width-tpFatness*2, canvas.height/2-tpHeight/2, tpHeight, tpFatness, 2);
 
 function animate() {
     requestAnimationFrame(animate);
@@ -95,7 +105,15 @@ function animate() {
     c.fillRect(0, 0, canvas.width, canvas.height);
     mainB.update();
     player.represent();
-    if(player.defend(mainB.x,mainB.y,mainB.size)) {
+    enemy.represent();
+    if(mainB.x>=canvas.width/2 - ayeSigh) {
+        enemy.follow(mainB.y);
+    }
+    if(mainB.x<=canvas.width/2 + ayeSigh) {
+        player.follow(mainB.y);
+    }
+    player.follow(mainB.y);
+    if(player.defend(mainB.x,mainB.y,mainB.size) || enemy.defend(mainB.x,mainB.y,mainB.size)) {
         mainB.getHit();
     }
 }
