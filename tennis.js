@@ -7,6 +7,9 @@ canvas.height = window.innerHeight - 50;
 let tpFatness= 20;
 let tpHeight = 80;
 let ayeSigh = 250;
+let pSpeed = 4;
+let eSpeed = 6;
+let iSpeed = 0;
 
 class ball {
     constructor(x, y, size, speed) {
@@ -75,6 +78,18 @@ class man extends tennisPlayer {
     constructor(x, y, height, width, speed) {
         super(x, y, height, width, speed);
     }
+    bounce() {
+        if(this.y>=canvas.height-this.height || this.y<=0){
+            iSpeed=-iSpeed;
+            console.log("bounce");
+        }
+    }
+    update(){
+        this.bounce();
+        this.y=this.y + iSpeed;
+    }
+    
+
 }
 
 class unman extends tennisPlayer {
@@ -83,21 +98,22 @@ class unman extends tennisPlayer {
     }
 
     follow(y) {
-        if(this.y+tpHeight/2<y && this.speed<0) {
-            this.speed = this.speed * -1;
-        } else if(this.y-tpHeight/2>y && this.speed>0) {
-            this.speed = this.speed * -1;
+        //A.i ig. prie kampu kai buna iskyla problema. galetu nejudeti visada
+        if(this.y+tpHeight<y) {
+            this.speed = eSpeed;
+        } else if(this.y-tpHeight>y) {
+            this.speed = -eSpeed;
         } else if(this.y>canvas.height-this.height || this.y<0){
-            this.speed = this.speed * -1;
+            this.speed = 0;
         }
         
         this.y = this.y + this.speed;
     }
 }
 
-let mainB = new ball(canvas.width/2,canvas.height/2, 20, 2);
-let player = new unman(tpFatness, canvas.height/2-tpHeight/2, tpHeight, tpFatness, 2);
-let enemy = new unman(canvas.width-tpFatness*2, canvas.height/2-tpHeight/2, tpHeight, tpFatness, 2);
+let mainB = new ball(canvas.width/2,canvas.height/2, 20, pSpeed);
+let player = new man(tpFatness, canvas.height/2-tpHeight/2, tpHeight, tpFatness, pSpeed+1);
+let enemy = new unman(canvas.width-tpFatness*2, canvas.height/2-tpHeight/2, tpHeight, tpFatness, eSpeed);
 
 function animate() {
     requestAnimationFrame(animate);
@@ -109,13 +125,23 @@ function animate() {
     if(mainB.x>=canvas.width/2 - ayeSigh) {
         enemy.follow(mainB.y);
     }
-    if(mainB.x<=canvas.width/2 + ayeSigh) {
-        player.follow(mainB.y);
-    }
-    player.follow(mainB.y);
+    player.update();
     if(player.defend(mainB.x,mainB.y,mainB.size) || enemy.defend(mainB.x,mainB.y,mainB.size)) {
         mainB.getHit();
     }
 }
 
+document.addEventListener('keydown', move);
+function move(e) {
+    switch (e.keyCode) {
+   
+        case 38:
+            iSpeed = -pSpeed;
+            break;
+     
+        case 40:
+            iSpeed = pSpeed;
+            break;
+    }
+};
 animate();
