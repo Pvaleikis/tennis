@@ -6,12 +6,12 @@ canvas.height = window.innerHeight - 50;
 let manScore = 0;
 let unmanScore = 0;
 let tpFatness= 20;
-let tpHeight = 80;
-let ayeSigh = 100;
-let pSpeed = 4;
-let eSpeed = 6;
+let tpHeight = canvas.height/6;
+let ayeSigh = 50;
+let pSpeed = 3;
+let eSpeed = 5;
 let iSpeed = 0;
-let bSpeed = -4;
+let bSpeed = -3;
 
 class ball {
     constructor(x, y, size, speed) {
@@ -43,6 +43,7 @@ class ball {
         let r = false
         if(canvas.width<this.x+this.size){
             manScore++;
+            increaseDif(manScore);
             r = true;
         } else if(this.x < 0) {
             unmanScore++;
@@ -166,5 +167,16 @@ function drawScore() {
     c.font = "40px Arial";
     c.fillStyle = "red";
     c.fillText("Man score: "+manScore+", Not man score: "+unmanScore, canvas.width/4, 40);
+}
+
+function increaseDif(a) {
+    if(a%3==0) {
+        pSpeed++;
+        bSpeed=-pSpeed;
+    } else if(a%4==0){
+        eSpeed++;
+    } else if (a%5){
+        ayeSigh=ayeSigh+100;
+    }
 }
 animate();
