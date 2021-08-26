@@ -3,7 +3,8 @@ const c = canvas.getContext('2d');
 
 canvas.width = window.innerWidth -50;
 canvas.height = window.innerHeight - 50;
-
+let manScore = 0;
+let unmanScore = 0;
 let tpFatness= 20;
 let tpHeight = 80;
 let ayeSigh = 100;
@@ -41,8 +42,10 @@ class ball {
     score(){
         let r = false
         if(canvas.width<this.x+this.size){
+            manScore++;
             r = true;
         } else if(this.x < 0) {
+            unmanScore++;
             r = true;
         }
         return r;
@@ -125,6 +128,7 @@ function animate() {
     requestAnimationFrame(animate);
     c.fillStyle = 'rgba(0, 0, 0, 0.6)';//the fade happens here
     c.fillRect(0, 0, canvas.width, canvas.height);
+   
     mainB.update();
     player.represent();
     enemy.represent();
@@ -138,6 +142,7 @@ function animate() {
     if(mainB.score()){
         mainB=spawnTheBall();
     }
+    drawScore();
 }
 
 function spawnTheBall(){
@@ -157,4 +162,9 @@ function move(e) {
             break;
     }
 };
+function drawScore() {
+    c.font = "40px Arial";
+    c.fillStyle = "red";
+    c.fillText("Man score: "+manScore+", Not man score: "+unmanScore, canvas.width/4, 40);
+}
 animate();
