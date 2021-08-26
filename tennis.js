@@ -6,10 +6,11 @@ canvas.height = window.innerHeight - 50;
 
 let tpFatness= 20;
 let tpHeight = 80;
-let ayeSigh = 250;
+let ayeSigh = 100;
 let pSpeed = 4;
 let eSpeed = 6;
 let iSpeed = 0;
+let bSpeed = -4;
 
 class ball {
     constructor(x, y, size, speed) {
@@ -36,10 +37,15 @@ class ball {
         if(canvas.height<this.y+this.size || this.y < 0) {
             this.speedY = this.speedY * -1;
         }
-        if(canvas.width<this.x+this.size || this.x < 0) {
-            console.log("score");
-            
-        } 
+    }
+    score(){
+        let r = false
+        if(canvas.width<this.x+this.size){
+            r = true;
+        } else if(this.x < 0) {
+            r = true;
+        }
+        return r;
     }
 
     getHit() {
@@ -111,7 +117,7 @@ class unman extends tennisPlayer {
     }
 }
 
-let mainB = new ball(canvas.width/2,canvas.height/2, 20, pSpeed);
+let mainB = new ball(canvas.width/2,canvas.height/2, 20, bSpeed);
 let player = new man(tpFatness, canvas.height/2-tpHeight/2, tpHeight, tpFatness, pSpeed+1);
 let enemy = new unman(canvas.width-tpFatness*2, canvas.height/2-tpHeight/2, tpHeight, tpFatness, eSpeed);
 
@@ -129,6 +135,13 @@ function animate() {
     if(player.defend(mainB.x,mainB.y,mainB.size) || enemy.defend(mainB.x,mainB.y,mainB.size)) {
         mainB.getHit();
     }
+    if(mainB.score()){
+        mainB=spawnTheBall();
+    }
+}
+
+function spawnTheBall(){
+    return new ball(canvas.width/2,canvas.height/2, 20, bSpeed);
 }
 
 document.addEventListener('keydown', move);
